@@ -1,0 +1,44 @@
+---
+title: "Task 1"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+```
+Page 1
+===
+Row {data-height=400}
+-----------------------------------------------------------------------
+
+### Chart A
+
+- This is just a random text.
+
+```{r}
+
+```
+Row {data-height=100}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+plot(iris$Sepal.Width, iris$Sepal.Length)
+```
+Row {data-height=100}
+-----------------------------------------------------------------------
+
+### Chart C
+
+- This is just a random text.
+
+```{r}
+dataset <- data("iris")
+plot(iris$Sepal.Width, iris$Sepal.Length)
+```
+

@@ -1,0 +1,156 @@
+---
+title: "Dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+  runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(dplyr)
+library(plotly)
+library(tidyverse)
+library(ggplot2)
+library(shiny)
+
+data(diamonds)
+
+data <- diamonds
+factors = c("cut", "color", "clarity")
+numbers = c("carat", "depth", "table","price","x","y","z")
+```
+
+Page 1
+===
+Row {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart 1.1
+
+```{r}
+  ggplot(diamonds, aes(x = clarity, fill = color)) +
+  geom_bar() +
+  xlab("Clarity") +
+  ylab("Freq") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```
+
+
+Page 2 
+===
+Row {data-width=450}
+-----------------------------------------------------------------------
+
+### Chart 2.1
+
+```{r}
+  ggplot(diamonds, aes(x = carat, y = price)) +
+  geom_point() +
+  xlab("Carat") +
+  ylab("Price") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```
+
+
+Page 3
+===
+Row {data-width=450}
+-----------------------------------------------------------------------
+
+### Chart 3.1
+```{r}
+#histogram
+#binwidth will decide the number of bands/bins
+ggplot(data) +
+  geom_histogram(aes(x = price), fill = 'green',
+                 color = "lightgreen", binwidth = 500)+
+  xlab("Depth") +
+  ylab("Freq") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```
+
+
+Page 4
+===
+Row {.sidebar data-width=200}
+-----------------------------------------------------------------------
+
+```{r}
+selectInput("categorical_variable", label = "Factor Variables:", choices = factors)
+
+selectInput("numeric_variable", label = "Numerical Variable:", choices = numbers)
+```
+
+Row {data-width=400}
+-----------------------------------------------------------------------
+
+### Chart 4.1
+
+```{r}
+renderPlotly({
+   plot_ly(data,
+              x = ~data[[input$numeric_variable]],
+              color = ~data[[input$categorical_variable]],
+              colors = "Paired",
+              type = "box") %>%
+  layout(title = "",
+         xaxis = list(title = "" ,
+                      zeroline = FALSE))
+})
+```
+
+
+Row {data-width=400}
+-----------------------------------------------------------------------
+
+### Chart 4.2
+
+```{r}
+renderPlotly({
+  plot_ly(x = data[[input$numeric_variable]], type = "histogram",
+  marker = list(color = "#008ae6", line = list(color = "darkgray", width = 1)))
+})
+```
+
+
+
+Page 5 {data-icon="fa-hashtag"}
+===
+Row {.tabset}
+-----------------------------------------------------------------------
+
+### Chart 5.1
+
+```{r}
+#tiles plot
+ggplot(as.data.frame(table(data$color,
+                           data$clarity))) +
+  geom_tile(aes(x = Var1, y = Var2, fill = Freq)) +
+  geom_text(aes(x = Var1, y = Var2, label = Freq),
+            color = "red") +
+  xlab("Color") +
+  ylab("Clarity") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```
+
+### Chart 5.2
+```{r}
+#violin plot
+ggplot(diamonds) +
+  geom_boxplot(aes(x = carat , y = cut)) +
+  xlab("Carat") +
+  ylab("Cut") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```

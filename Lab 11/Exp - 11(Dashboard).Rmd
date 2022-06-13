@@ -1,0 +1,328 @@
+#install.packages('flexdashboard')
+#install.packages("plotly")
+
+
+#file-->new file-->R markdown-->template-->flex
+#To see this output we need to "Knit" the file by either clicking on the 
+#Knit icon near the top of our faile or pressing Ctrl+Shift+K.
+
+
+
+#We could have a one-page dashboard but that would mean cramming a lot of 
+#information in a small space. Flexdashboard gives us an option for having 
+#multiple pages on our dashboard by demarcating sections in the code using the === header
+
+
+
+#Now within a page, the layout orientation is based on rows or columns (or both). 
+#A new row or column can be added using the ---header or ##.
+
+
+
+#In R markdown working code needs to be encapsulated by the delimiters ```r{} and ``` 
+#also called the code chunk delimiters. The way R markdown works is it will embed the 
+#results at the end of the code chunk onto the HTML dashboard output.
+
+
+
+#ValueBox: Sometimes you want to include one or more simple values within a dashboard. 
+#You can use the valueBox function to display single values along with a title and 
+#optional icon.
+#You can specify icons from three different icon sets:
+#Font Awesome
+#Ionicons
+#Bootstrap Glyphicons
+#When referring to an icon you should use it's full name including the icon set 
+#prefix (e.g. "fa-github", "ion-social-twitter", "glyphicon-time", etc.).
+
+
+
+#Linking
+#If a valueBox displays a value for which additional detail is available on another 
+#dashboard page you can enable navigation to the other page via the href parameter.
+
+
+
+#Gauges: Gauges display values on a meter within a specified range.
+
+
+
+---
+  title: "iris"
+output: 
+  flexdashboard::flex_dashboard:
+  orientation: column #change this to row
+vertical_layout: scroll #fill/scroll
+---
+  
+  
+  
+  ```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+```
+Page 1
+===
+  Column {data-width=650}
+-----------------------------------------------------------------------
+  
+  
+  
+  ### Chart A
+  
+  
+  
+  ```{r}
+
+
+
+```
+
+
+
+Page 2
+===
+  Column {data-width=350}
+-----------------------------------------------------------------------
+  
+  
+  
+  ### Chart B
+  
+  
+  
+  ```{r}
+
+
+
+```
+
+
+
+### Chart C
+
+
+
+```{r}
+
+
+
+```
+Page 3
+===
+  Column {data-width=350}
+-----------------------------------------------------------------------
+  
+  
+  
+  ### Chart D
+  
+  
+  
+  ```{r}
+
+
+
+```
+
+
+
+### Chart E
+
+
+
+```{r}
+
+
+
+```
+
+
+
+### Chart F
+
+
+
+```{r}
+
+
+
+```
+
+
+
+Page 4 {data-orientation=rows}
+===
+  Row {data-height=650}
+-------------------------------------
+  
+  ### Chart 1
+  
+  ```{r}
+
+
+
+```
+
+Row {data-height=350}
+-------------------------------------
+  
+  ### Chart 2
+  
+  ```{r}
+
+
+
+```
+
+### Chart 3
+
+
+
+```{r}
+
+
+
+```
+
+
+
+Page 5
+===
+  Column {data-width=600}
+-------------------------------------
+  
+  ### Chart 1
+  
+  ```{r}
+
+
+
+```
+
+Column {data-width=400}
+-------------------------------------
+  
+  ### Chart 2
+  
+  
+  
+  ```{r}
+
+
+
+```   
+
+### Chart 3
+
+```{r}
+
+
+
+```
+Page 6 {data-icon="fa-hashtag"}
+===
+  Column 
+-------------------------------------
+  
+  ### Chart 1
+  
+  ```{r}
+
+
+
+```
+
+Column {.tabset}
+-------------------------------------
+  
+  ### Chart 2
+  
+  
+  
+  ```{r}
+
+
+
+```   
+
+### Chart 3
+
+```{r}
+
+
+
+```
+Page 7 {data-orientation=rows}
+===
+  Row 
+-------------------------------------
+  
+  ### Chart 1
+  
+  ```{r}
+
+
+
+```
+
+Row {.tabset .tabset-fade}
+-------------------------------------
+  
+  ### Chart 2
+  
+  
+  
+  ```{r}
+
+
+
+```   
+
+### Chart 3
+
+```{r}
+
+
+
+```
+
+
+
+Page 8 {data-orientation=rows}
+===
+  Row
+-----------------------------------------------------------------------
+  
+  
+  
+  ### Articles per Day
+  
+  
+  
+  ```{r}
+valueBox(45, icon = "fa-pencil", href="#details")
+```
+
+
+
+### Comments per Day
+
+
+
+```{r}
+valueBox(126, icon = "fa-comments")
+```
+
+
+
+### Spam per Day
+
+
+
+```{r}
+spam <- 5
+valueBox(spam, 
+         icon = "fa-trash",
+         color = ifelse(spam > 10, "warning", "primary"))
+```

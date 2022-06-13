@@ -1,0 +1,74 @@
+---
+title: "Diamond Files"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+  runtime: shiny
+---
+
+ 
+
+{r setup, include=FALSE}
+library(flexdashboard)
+library(shiny)
+library(dplyr)
+library(plotly)
+library(ggplot2)
+library(tidyverse)
+library("ggpubr")
+library(corrplot)
+
+my_data <- diamonds
+
+
+
+Column {data-width=400}
+-----------------------------------------------------------------------
+
+ 
+Page 1
+===
+Column {data-width=650}
+-----------------------------------------------------------------------
+### Chart A
+
+ 
+
+{r}
+
+# DEPTH
+ggqqplot(my_data$depth, ylab = "DEPTH")
+# TABLE
+ggqqplot(my_data$table, ylab = "TABLE")
+
+
+
+ 
+Page 2
+===
+Column {data-width=650}
+-----------------------------------------------------------------------
+### Chart B
+
+
+{r}
+M<-cor(diamonds[c(1,5,6,7,8,9,10)])
+corrplot(M, method="circle")
+corrplot(M, method="number")
+
+
+
+
+Page 3
+===
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart C
+
+{r}
+ggscatter(my_data, x = "depth", y = "table", 
+          add = "reg.line", conf.int = TRUE, 
+          cor.coef = TRUE, cor.method = "pearson",
+          xlab = "Depth", ylab = "Table")

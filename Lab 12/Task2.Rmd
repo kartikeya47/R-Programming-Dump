@@ -1,0 +1,112 @@
+---
+title: "explore customer profiles"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+  runtime: shiny
+---
+
+ 
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(shiny)
+library(dplyr)
+library(plotly)
+data <- read.csv("BankChurners.csv")
+
+ 
+
+Categorical.Variables = c("Gender", "Education_Level", "Marital_Status")
+
+ 
+
+Numeric.Variables = c("Customer_Age", "Total_Trans_Ct", "Credit_Limit")
+```
+
+ 
+
+Column {.sidebar data-width=200}
+-----------------------------------------------------------------------
+
+ 
+
+```{r}
+
+ 
+
+selectInput("categorical_variable", label = "Select Categorical Variable:", choices = Categorical.Variables)
+
+ 
+
+selectInput("numeric_variable", label = "Select Numeric Variable:", choices = Numeric.Variables)
+
+ 
+
+```
+
+ 
+
+Column {data-width=400}
+-----------------------------------------------------------------------
+
+ 
+
+### Chart A
+
+ 
+
+```{r}
+renderPlotly({
+   plot_ly(data,
+              x = ~data[[input$numeric_variable]],
+              color = ~data[[input$categorical_variable]],
+              colors = "Paired",
+              type = "box") %>%
+  layout(title = "",
+         xaxis = list(title = "" ,
+                      zeroline = FALSE))
+})
+```
+
+ 
+
+
+Column {data-width=400}
+-----------------------------------------------------------------------
+
+ 
+
+### Chart B
+
+ 
+
+```{r}
+renderPlotly({
+  data %>%
+    count(var = data[[input$categorical_variable]], name = "count") %>%
+    plot_ly( x = ~var, y = ~ count, type = "bar", marker = list(color = '#008ae6',
+                           line = list(color = '#008ae6', width = 2)), hoverinfo = "x+y") %>%
+    add_text(text = ~paste0( " (",   scales::percent(count/sum(count)),")"), 
+           textposition = "bottom", 
+           textfont = list(size = 12, color = "white"), 
+           showlegend = FALSE) %>%
+    layout(xaxis = list(title = ""), yaxis = list(title = ""))
+    
+})
+```
+
+ 
+
+### Chart C
+
+ 
+
+```{r}
+renderPlotly({
+  plot_ly(x = data[[input$numeric_variable]], type = "histogram",  marker = list(color = "#008ae6",
+                            line = list(color = "darkgray",
+                                        width = 1)))
+})
+```

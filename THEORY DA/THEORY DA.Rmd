@@ -1,0 +1,300 @@
+---
+title: "Theory DA"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+  runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(dplyr)
+library(plotly)
+library(tidyverse)
+library(ggplot2)
+library(shiny)
+
+data(mtcars)
+
+data <- mtcars
+factors = c("cyl", "hp", "gear", "vs", "am")
+numbers = c("mpg", "disp", "drat","wt","qsec", "carb")
+```
+
+Page 1
+===
+Row {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart 1.1
+
+```{r}
+  ggplot(mtcars, aes(x = factor(gear), fill = factor(cyl))) +
+  geom_bar() +
+  ggtitle("Bar Plot of Freq Vs. Type of Gear") +
+  xlab("Gear") +
+  ylab("Freq") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```
+
+
+Page 2 
+===
+Row {data-width=450}
+-----------------------------------------------------------------------
+
+### Chart 2.1
+
+```{r}
+  ggplot(mtcars, aes(x = mpg, y = disp, color = gear)) +
+  geom_point() +
+  ggtitle("Scatter Plot of Disp Vs. MPG") +
+  xlab("MPG") +
+  ylab("Disp") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```
+
+
+Page 3
+===
+Row {data-width=450}
+-----------------------------------------------------------------------
+
+### Chart 3.1
+```{r}
+
+ggplot(data) +
+  geom_line(aes(x = disp, y = hp), fill = 'red',
+                 color = "blue", binwidth = 400)+
+  ggtitle("Line Plot of Hp Vs. Disp") +
+  xlab("Disp") +
+  ylab("Hp") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```
+
+
+Page 4
+===
+Row {.sidebar data-width=200}
+-----------------------------------------------------------------------
+
+```{r}
+selectInput("numeric_variable", label = "Numerical Variable:",
+            choices = numbers)
+```
+
+Row {data-width=400}
+-----------------------------------------------------------------------
+
+### Chart 4.1
+
+```{r}
+renderPlotly({
+   plot_ly(data,
+              x = ~data[[input$numeric_variable]],
+              colors = "Paired",
+              type = "violin") %>%
+        layout(title = 'Violin Plot',
+               plot_bgcolor = "#e5ecf6") 
+})
+```
+
+
+Row {data-width=400}
+-----------------------------------------------------------------------
+
+### Chart 4.2
+
+```{r}
+renderPlotly({
+  plot_ly(x = data[[input$numeric_variable]], type = "histogram",
+  marker = list(color = "#008ae6", line = list(color = "darkgray",
+                                               width = 1))) %>%
+    layout(title = 'Histogram', plot_bgcolor = "#e5ecf6")
+})
+```
+
+
+
+Page 5
+===
+Row {.tabset}
+-----------------------------------------------------------------------
+
+### Chart 5.1
+
+```{r}
+
+ggplot(as.data.frame(table(mtcars$hp,
+                           mtcars$wt))) +
+  ggtitle("Tile Plot of Hp Vs. Weight") +
+  geom_tile(aes(x = Var1, y = Var2, fill = Freq)) +
+  geom_text(aes(x = Var1, y = Var2, label = Freq),
+            color = "black") +
+  xlab("Hp") +
+  ylab("Weight") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```
+
+### Chart 5.2
+```{r}
+
+p <- ggplot(mtcars, aes(x=gear, y=qsec)) + 
+  ggtitle("Violin Plot of Qsec Vs. Gear Type") +
+  geom_violin(trim = FALSE) +
+  xlab("Gear") +
+  ylab("Qsec")
+p
+```
+
+
+Page 6
+===
+Row {data-width=450}
+-----------------------------------------------------------------------
+
+### Chart 6.1
+```{r}
+ggplot(data, aes(x=factor(1), fill=factor(gear)))+
+  ggtitle("Pie Chart of Gear Type") +
+  geom_bar(width = 1)+
+  coord_polar("y")
+```
+
+
+### Chart 6.2
+```{r}
+ggplot(data, aes(x=factor(1), fill=factor(vs)))+
+  ggtitle("Pie Chart of Vs Type") +
+  geom_bar(width = 1)+
+  coord_polar("y")
+```
+
+
+Row {data-width=450}
+-----------------------------------------------------------------------
+
+### Chart 6.3
+```{r}
+ggplot(data, aes(x=factor(1), fill=factor(am)))+
+  ggtitle("Pie Chart of Am Type") +
+  geom_bar(width = 1)+
+  coord_polar("y")
+```
+
+
+### Chart 6.4
+```{r}
+ggplot(data, aes(x=factor(1), fill=factor(cyl)))+
+  ggtitle("Pie Chart of Cyl Type") +
+  geom_bar(width = 1)+
+  coord_polar("y")
+```
+
+
+Page 7
+===
+Row {.sidebar data-width=200}
+-----------------------------------------------------------------------
+
+```{r}
+selectInput("numeric_variable1", label = "Numerical Variable1:",
+            choices = numbers)
+selectInput("numeric_variable2", label = "Numerical Variable2:",
+            choices = numbers)
+selectInput("categorical_variable1", label = "Categorical Variable1:",
+            choices = factors)
+```
+
+Row {data-width=400}
+-----------------------------------------------------------------------
+
+### Chart 7.1
+
+```{r}
+renderPlotly({
+   plot_ly(data,
+              x = ~data[[input$numeric_variable1]],
+              y = ~data[[input$numeric_variable2]],
+              color = ~data[[input$categorical_variable1]],
+              colors = "Paired",
+              type = "scatter") %>%
+        layout(title = 'Scatter Plot',
+               plot_bgcolor = "#e5ecf6")
+})
+```
+
+
+Page 8
+===
+Row {data-width=450}
+-----------------------------------------------------------------------
+
+### Chart 8.1
+```{r}
+data1 <- count(data, cyl)
+plot_ly(data1 ,values = ~n, labels = ~factor(cyl), marker=
+          list(colors=c("orange", "green", "gray")), type="pie",
+        title="Pie Chart") %>%
+        layout(title = 'Pie Chart Showing quantity of all types of CYL',
+               plot_bgcolor = "#e5ecf6")
+```
+
+### Chart 8.2
+```{r}
+data1 <- count(data, gear)
+plot_ly(data1 ,values = ~n, labels = ~factor(gear), marker=
+          list(colors=c("red", "blue", "indigo")), type="pie",
+        title="Pie Chart") %>%
+        layout(title = 'Pie Chart Showing quantity of all types of Gears',
+               plot_bgcolor = "#e5ecf6")
+```
+
+
+Page 9
+===
+Row {data-width=450}
+-----------------------------------------------------------------------
+
+### Chart 9.1
+```{r}
+ggplot(data) +
+  geom_bar(aes(x = factor(gear), fill = factor(am)), position = 'dodge') +
+ 
+  ggtitle("Grouped Bar Plot showing Different types of Gears\n
+          with types of Transmission") +
+  xlab("Gear Type") +
+  ylab("Count") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```
+
+
+Page 10 {data-icon="fa-hashtag"}
+===
+Row {data-width=450}
+-----------------------------------------------------------------------
+
+### Chart 10.1
+```{r}
+ggplot(data) +
+  geom_boxplot(aes(x = factor(gear), y = hp)) +
+ 
+  ggtitle("Box Plot showing distribution of Gears") +
+  xlab("Gear Type") +
+  ylab("Count") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```
+
